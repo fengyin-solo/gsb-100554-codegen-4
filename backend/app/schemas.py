@@ -244,3 +244,25 @@ class ReportEntry(BaseModel):
     field_5: str | None = None  # 设备可利用率
     field_6: str | None = None  # 故障停机时间
     field_7: str | None = None  # 月报状态
+
+class InsuranceClaimEntry(BaseModel):
+    """保险理赔案件明细结构（报案登记口径，免赔额与赔付上限为保单条款快照）。"""
+
+    field_0: str | None = None  # 案件编号
+    field_1: str | None = None  # 出险时间
+    field_2: str | None = None  # 报案时间
+    field_3: str | None = None  # 受损设备
+    field_4: str | None = None  # 估损金额
+    field_5: str | None = None  # 保单号
+    field_6: str | None = None  # 免赔额
+    field_7: str | None = None  # 赔付上限
+
+class ClaimReceivableEntry(BaseModel):
+    """财务待收款台账明细结构（由赔付结论自动生成）。"""
+
+    field_0: str | None = None  # 台账编号
+    field_1: str | None = None  # 案件编号
+    field_2: str | None = None  # 赔付金额
+    field_3: str | None = None  # 收款状态
+    field_4: str | None = None  # 登记时间
+    field_5: str | None = None  # 收款时间
