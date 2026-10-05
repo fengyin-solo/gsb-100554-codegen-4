@@ -5,10 +5,13 @@
 """
 from __future__ import annotations
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.config import settings
+from app.db import initialize_database
+from app.errors import DomainError
 from app.routers import ROUTERS
 from app.store import store
 
@@ -22,6 +25,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.exception_handler(DomainError)
+def domain_error_handler(_: Request, exc: DomainError) -> JSONResponse:
+    return JSONResponse(status_code=exc.status_code, content={"detail": str(exc)})
+
+
+initialize_database()
+
 for module in ROUTERS:
     app.include_router(module.router)
 
@@ -29,7 +40,7 @@ for module in ROUTERS:
 @app.get("/api/health")
 def health() -> dict[str, object]:
     """健康检查：确认服务已经监听、示例数据已经就绪。"""
-    return {"ok": True, "app": settings.app_name, "modules": len(store.module_names())}
+    return {"ok": True, "app": settings.app_name, "modules": len(store.module_names()) + 2}
 
 
 @app.get("/api/overview")

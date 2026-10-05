@@ -19,3 +19,15 @@ export async function fetchJson<T>(path: string): Promise<T> {
   }
   return (await response.json()) as T
 }
+
+export async function postJson<T>(path: string, payload: unknown): Promise<T> {
+  const response = await request(path, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+  const data = (await response.json().catch(() => null)) as { detail?: string; message?: string } | null
+  if (!response.ok) {
+    throw new Error(data?.detail ?? data?.message ?? `接口返回 ${response.status}，数据未更新`)
+  }
+  return data as T
+}

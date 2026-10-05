@@ -17,7 +17,8 @@
 ├── backend/                  FastAPI（Python） 后端
 │   ├── app/routers/          每个业务模块一组接口
 │   ├── app/services/         业务规则与状态流转
-│   └── app/store.py          内存数据仓库与示例数据
+│   ├── app/db.py             保险理赔 SQLite 持久化与存量回填
+│   └── app/store.py          其他示例模块的内存数据仓库
 ├── .gitignore
 └── docker-compose.yml
 ```
@@ -67,6 +68,8 @@ npm run dev
 | 安全措施 | `safety` | 安全措施票 | 措施编号、措施类型、涉及设备 |
 | 运维合同 | `contract` | 运维合同 | 合同编号、合同名称、签约甲方 |
 | 运行月报 | `report` | 运行月报 | 月报编号、统计月份、发电量 |
+| 保险理赔台账 | `insurance_claim` | 保险理赔案件 | 案件编号、出险/报案时间、受损设备、估损金额、免赔额、赔付上限 |
+| 财务待收款 | `finance_receivable` | 理赔待收款 | 待收款编号、案件编号、应收金额、收款状态、到账时间 |
 
 ## 约定
 
@@ -74,3 +77,5 @@ npm run dev
   `backend/app/routers/<模块>.py`，业务规则在 `backend/app/services/<模块>.py`。
 - 列表接口统一返回 `{ items, total, page, size }`，动作接口统一返回 `{ ok, message }`。
 - 状态流转只允许在 `app/services` 里改，路由层不做业务判断。
+- 保险理赔数据持久化到 SQLite，默认文件为 `backend/data/ops.db`，可用 `DATABASE_PATH` 覆盖。
+- 免赔额与赔付上限冲突时只保留赔付更少的从严规则；结案后赔付金额锁定并写入财务待收款台账。
